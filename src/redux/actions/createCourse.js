@@ -33,6 +33,28 @@ export function loadCoursesSuccess(courses){
     }
 }
 
+
+function deleteCourseFrontEnd(course){
+    return {
+        type:actionTypes.DELETE_COURSE,
+        course:course
+    }
+}
+
+export function deleteCourse(course){
+    return function(dispatch){
+        // dispatch(apiActions.beginApiCallAction());
+        dispatch(deleteCourseFrontEnd(course));
+        return courseApi.deleteCourse(course.id)        
+        .catch((error)=> {
+            // dispatch(apiActions.errorApiCallAction());
+            console.log(error);
+            throw error;
+        });
+    }
+
+}
+
 export function loadCourses(){
     return function(dispatch){
         dispatch(apiActions.beginApiCallAction());

@@ -7,11 +7,12 @@ function processActionTypeMessage(actionTypeMessage){
 }
 
 export default function apiStatusChangeReducer(state=initialState.apiStatusCount,action){
+    let newState = state;
     if(action.type === types.BEGIN_API_CALL){
-        return state+1;
+        return newState + 1;
     }else if(processActionTypeMessage(action.type) || action.type === types.ERROR_API_CALL){
-        return state-1;
+        return newState - 1;
     } 
 
-    return state;
+    return newState;
 }

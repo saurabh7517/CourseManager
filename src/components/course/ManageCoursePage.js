@@ -5,6 +5,7 @@ import * as authorActions from '../../redux/actions/createAuthor';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CourseForm from './CourseForm';
+import { toast } from 'react-toastify';
 class ManageCoursePage extends React.Component {
     constructor(props) {
         super(props);
@@ -38,6 +39,7 @@ class ManageCoursePage extends React.Component {
         // const {name,value} = event.target;
         event.preventDefault();
         let promise = this.props.actions.courseAction.saveCourse(this.state.course);
+        toast.success("Course Saved!!");
         promise.then(() => this.props.history.push('/courses'));
     }
 

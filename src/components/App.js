@@ -5,6 +5,8 @@ import Home from './home/Home';
 import AboutUs from './aboutus/AboutUs';
 import CoursePage from './course/CoursePage';
 import ManageCoursePage from './course/ManageCoursePage';
+import { ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 class App extends React.Component{
     constructor(props){
         super(props);
@@ -20,6 +22,7 @@ class App extends React.Component{
                     <Route path="/course/:slug" component={ManageCoursePage}/>
                     <Route path="/course" component={ManageCoursePage}/>
                 </Switch>
+                <ToastContainer autoClose={3000}/>
             </div>
 
         )

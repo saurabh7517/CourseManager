@@ -3,6 +3,7 @@ import {PropTypes} from "prop-types";
 import {Link} from 'react-router-dom';
 const CourseList  = (props) => {
     let courses = props.courses;
+
     return (
     <table className="table">
     <thead>
@@ -11,6 +12,7 @@ const CourseList  = (props) => {
         <th>Title</th>
         <th>Author</th>
         <th>Category</th>
+        <th>Delete</th>
       </tr>
     </thead>
     <tbody>
@@ -30,6 +32,7 @@ const CourseList  = (props) => {
             </td>
             <td>{course.authorName}</td>
             <td>{course.category}</td>
+            <td><button type="button" onClick={() => props.onDelete(course)} className="btn btn-outline-danger">Delete</button></td>
           </tr>
         );
       })}

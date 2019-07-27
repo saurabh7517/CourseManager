@@ -2,16 +2,20 @@ import React from 'react';
 import PropTypes from "prop-types"; 
 import * as courseActions from '../../redux/actions/createCourse';
 import * as authorActions from '../../redux/actions/createAuthor';
+
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CourseList from './CourseList';
 import {Redirect} from "react-router-dom";
+import {toast} from "react-toastify";
 import Spinner from '../common/Spinner';
+// import {toast} from "react-toastify";
 
 class CoursePage extends React.Component{
     constructor(props){
         super(props);
         this.handleClick = this.handleClick.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
         this.generateCourseList = this.generateCourseList.bind(this);
         this.state = {
             redirectToAddCoursePage:false
@@ -21,8 +25,13 @@ class CoursePage extends React.Component{
     componentDidMount(){
         this.props.actions.courseAction.loadCourses().catch((error) => {console.log(error)});
         this.props.actions.authorAction.loadAuthors().catch((error) => console.log(error));
-        
+    }
 
+    handleDelete(course){
+        this.props.actions.courseAction.deleteCourse(course)
+        .then(()=>toast.sucess("Course with id" + course.id + " deleted!!"),(error)=> {toast.error("Delete Api call failed " + error,{autoClose:false})});
+        // .catch(error=> toast.error("Delete Api call failed " + error,{autoClose:false}));
+        
     }
 
     handleClick(event){
@@ -50,10 +59,13 @@ class CoursePage extends React.Component{
         return(
             <React.Fragment>
                 {this.state.redirectToAddCoursePage === true ? <Redirect to="/course"/> : null}
-                <h2>Courses</h2>
-                <button onClick = {(event) => this.handleClick() } className='btn btn-primary add-course' >Add Course</button>
                 {
-                    this.props.loading === true ? <Spinner/> : <CourseList courses={newList}/>
+                    this.props.loading === true ? (<Spinner/>) : 
+                    (                    <>
+                    <h2>Courses</h2>
+                    <button onClick = {(event) => this.handleClick() } className='btn btn-primary add-course' >Add Course</button>
+                    <CourseList courses={newList} onDelete={this.handleDelete}/>
+                    </>)
                 }
 
                 
