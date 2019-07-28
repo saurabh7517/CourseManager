@@ -83,7 +83,7 @@ function mapStateToProps(state, ownProps) {
     };
     return {
         course: course,
-        courseList: state.authorReducer.length !== 0 ? state.courseReducer.map(course => generateCourseList(state.authorReducer, course)) : [],
+        courseList: state.authorReducer.length !== 0 ? state.courseReducer.courses.map(course => generateCourseList(state.authorReducer, course)) : [],
         authorList: state.authorReducer,
         loading:state.apiStatusChangeReducer > 0 ? true : false
     }

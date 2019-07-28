@@ -1,5 +1,6 @@
-export default  {
-    courses:[],
-    authors:[],
-    apiStatusCount:0
+export default {
+    courses: [],
+    toRemove: [],
+    authors: [],
+    apiStatusCount: 0
 }

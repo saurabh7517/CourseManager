@@ -22,7 +22,7 @@ class App extends React.Component{
                     <Route path="/course/:slug" component={ManageCoursePage}/>
                     <Route path="/course" component={ManageCoursePage}/>
                 </Switch>
-                <ToastContainer autoClose={3000}/>
+                <ToastContainer autoClose={5000}/>
             </div>
 
         )

@@ -2,23 +2,24 @@ import React from 'react';
 import PropTypes from "prop-types"; 
 import * as courseActions from '../../redux/actions/createCourse';
 import * as authorActions from '../../redux/actions/createAuthor';
-
+import ToastUndo from "./ToastUndo";
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import CourseList from './CourseList';
 import {Redirect} from "react-router-dom";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import Spinner from '../common/Spinner';
-// import {toast} from "react-toastify";
 
 class CoursePage extends React.Component{
     constructor(props){
         super(props);
         this.handleClick = this.handleClick.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
+        this.undo = this.undo.bind(this);
         this.generateCourseList = this.generateCourseList.bind(this);
         this.state = {
-            redirectToAddCoursePage:false
+            redirectToAddCoursePage:false,
+            toRemove:[]
         }
     } 
 
@@ -27,12 +28,26 @@ class CoursePage extends React.Component{
         this.props.actions.authorAction.loadAuthors().catch((error) => console.log(error));
     }
 
-    handleDelete(course){
-        this.props.actions.courseAction.deleteCourse(course)
-        .then(()=>toast.sucess("Course with id" + course.id + " deleted!!"),(error)=> {toast.error("Delete Api call failed " + error,{autoClose:false})});
-        // .catch(error=> toast.error("Delete Api call failed " + error,{autoClose:false}));
-        
+    handleHardDelete(course){
+        let removedCourse = this.props.removeCourseReducerList.find((tempCourse) => tempCourse.id === course.id);
+        if(removedCourse){
+            this.props.actions.courseAction.hardDeleteCourse(course).catch(() => toast.error("Delete api call failed"));
+        }
     }
+
+    undo(course){
+        this.props.actions.courseAction.removeFromToRemove(course);
+
+        this.props.actions.courseAction.addBackDeletedCourse(course);
+    }
+
+    handleDelete(course){
+        this.props.actions.courseAction.addToRemove(course);
+
+        this.props.actions.courseAction.softDeleteCourse(course);
+        toast(<ToastUndo course = {course} undo = {this.undo}/>, {onClose:()=> this.handleHardDelete(course)});
+    }
+
 
     handleClick(event){
         this.setState({redirectToAddCoursePage:true});
@@ -67,8 +82,6 @@ class CoursePage extends React.Component{
                     <CourseList courses={newList} onDelete={this.handleDelete}/>
                     </>)
                 }
-
-                
             </React.Fragment>
          );
     }
@@ -76,13 +89,10 @@ class CoursePage extends React.Component{
 
 function mapStateToProps(state){
     return{
-        // courseList:state.authorReducer === 0 ? [] : state.courseReducer.map(course =>{
-        //     let tempAuthor = state.authorReducer.find(a => a.id === course.authorId);
-        //     return {...course,authorName:tempAuthor.name}
-        // }),
         courseList:state.courseReducer,
         authorList:state.authorReducer,
-        loading:state.apiStatusChangeReducer > 0 ? true : false
+        loading:state.apiStatusChangeReducer > 0 ? true : false,
+        removeCourseReducerList:state.removeCourseReducer
     }
 }
 
@@ -98,6 +108,7 @@ function mapDispatchToProps(dispatch){
 CoursePage.propTypes = {
     courseList:PropTypes.array.isRequired,
     authorList:PropTypes.array.isRequired,
+    removeCourseReducerList:PropTypes.array.isRequired,
     actions:PropTypes.object.isRequired,
     loading:PropTypes.bool.isRequired
 }
